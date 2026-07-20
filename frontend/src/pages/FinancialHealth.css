@@ -1,0 +1,34 @@
+.container {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  min-height: 100vh;
+  padding: 30px;
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.card:hover {
+  background: var(--bg-hover);
+}
+
+.badge {
+  background: var(--accent-green);
+  color: white;
+}
+
+.tips {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+.title {
+  color: var(--text-primary);
+}
+
+.subtitle {
+  color: var(--text-secondary);
+}
