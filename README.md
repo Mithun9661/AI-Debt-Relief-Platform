@@ -181,7 +181,7 @@ pytest -v
 Project: AI-Powered Debt Relief & Financial Recovery Platform
 
 - Team Leader: Madhu Thaddi
-Github Repository : https://github.com/shadabkhanamdouzi-commits/FineRelief-.git 
+Github Repository : https://github.com/Mithun9661-commits/AI-Debt-Relief-Platform-.git 
 - Member 1: Durga Prasad Gandiboina
 - Member 2: Mithun Kumar
 - Member 3: Lohitha Gude
