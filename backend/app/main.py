@@ -9,7 +9,7 @@ app.include_router(ai_router)
 #Base.metadata.create_all(bind=engine)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5174", "http://localhost:5173"],
+    allow_origins=["http://localhost:5174", "https://debt-relief-platform-xi.vercel.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
