@@ -1,61 +1,93 @@
-from app.database import engine, Base 
-from app.models import User, Loan, AIHistory
-from app.routes.ai_routes import router as ai_router
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
+
+from app.database import Base, engine, get_db
+from app.models import User, Loan, AIHistory
+from app.auth import router as auth_router
+from app.auth_utils import hash_password
+from app.routes.ai_routes import router as ai_router
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="FinRelief AI")
-app.include_router(ai_router)
-#Base.metadata.create_all(bind=engine)
+
+# -----------------------------
+# CORS
+# -----------------------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5174", "https://debt-relief-platform-xi.vercel.app"],
+    allow_origins=[
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "https://debt-relief-platform-xi.vercel.app",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# -----------------------------
+# ROUTERS
+# -----------------------------
+app.include_router(auth_router)
+app.include_router(ai_router)
+
+# -----------------------------
+# HOME
+# -----------------------------
 @app.get("/")
-def root():
-    return {"message": "Welcome to FinRelief AI"}
-
-@app.post("/register")
-def register():
-    return {"message": "User registered successfully"}
-
-@app.get("/debug_user")
-def debug_user():
-    return {"message": "Debug user"}
-
-from app.auth import create_token
-
-@app.post("/login")
-def login():
-    token = create_token({"sub": "user@example.com"})
+def home():
     return {
-        "message": "Login successful",
-        "access_token": token,
-        "token_type": "bearer"
+        "message": "Welcome to FinRelief AI"
     }
 
-@app.put("/update_profile")
-def update_profile():
-    return {"message": "Profile updated"}
+# -----------------------------
+# REGISTER
+# -----------------------------
+@app.post("/register")
+def register(data: dict, db: Session = next(get_db())):
 
-@app.post("/add_loan")
-def add_loan():
-    return {"message": "Loan added"}
+    email = data.get("email", "").strip().lower()
+    password = data.get("password", "").strip()
+    name = data.get("name", "").strip()
 
-@app.get("/loans")
-def get_loans():
-    return {"message": "Loans retrieved"}
+    if not email or not password:
 
-@app.delete("/delete_loan/{loan_id}")
-def delete_loan(loan_id: int):
-    return {"message": f"Loan {loan_id} deleted"}
+        return {
+            "success": False,
+            "message": "Email and Password required"
+        }
 
+    user = db.query(User).filter(User.email == email).first()
+
+    if user:
+
+        return {
+            "success": False,
+            "message": "User already exists"
+        }
+
+    new_user = User(
+        email=email,
+        password=hash_password(password),
+        name=name
+    )
+
+    db.add(new_user)
+    db.commit()
+
+    return {
+        "success": True,
+        "message": "Registration Successful"
+    }
+
+# -----------------------------
+# DASHBOARD
+# -----------------------------
 @app.get("/dashboard_data")
 def dashboard_data():
+
     return {
         "monthly_surplus": 25000,
         "total_outstanding": 350000,
@@ -63,24 +95,12 @@ def dashboard_data():
         "debt_stress": "Medium"
     }
 
-@app.get("/settlement_predictor")
-def settlement_predictor():
-    return {"message": "Settlement prediction"}
-
-@app.get("/ai_negotiation_strategy")
-def ai_negotiation_strategy():
-    return {"message": "AI negotiation strategy"}
-
-@app.get("/generate_negotiation_email/{loan_id}")
-def generate_negotiation_email(loan_id: int):
-    return {"message": f"Negotiation email generated for loan {loan_id}"}
-
-@app.get("/ai_history")
-def ai_history():
-    return {"message": "AI history"}
-
+# -----------------------------
+# FINANCIAL HEALTH
+# -----------------------------
 @app.get("/financial_health")
 def financial_health():
+
     return {
         "monthly_income": 50000,
         "monthly_expenses": 25000,
@@ -91,17 +111,49 @@ def financial_health():
         "stress_level": "Low",
         "settlement_percentage": "60%",
         "tips": [
-            "Reduce discretionary spending to increase surplus.",
-            "Use lump sum to repay high-interest loans first.",
-            "Track all monthly expenses carefully.",
-            "Contact lenders for restructuring if needed."
+            "Reduce unnecessary expenses.",
+            "Pay high-interest loans first.",
+            "Track monthly spending.",
+            "Maintain emergency savings."
         ]
     }
 
-@app.get("/debt_timeline")
-def debt_timeline():
-    return {"message": "Debt timeline"}
+# -----------------------------
+# SETTLEMENT
+# -----------------------------
+@app.get("/settlement_predictor")
+def settlement():
 
+    return {
+        "message": "Settlement prediction"
+    }
+
+# -----------------------------
+# NEGOTIATION
+# -----------------------------
+@app.get("/ai_negotiation_strategy")
+def negotiation():
+
+    return {
+        "message": "AI negotiation strategy"
+    }
+
+# -----------------------------
+# HISTORY
+# -----------------------------
+@app.get("/ai_history")
+def history():
+
+    return {
+        "message": "History"
+    }
+
+# -----------------------------
+# DB TEST
+# -----------------------------
 @app.get("/test_db")
 def test_db():
-    return {"status": "Database connection successful"}
+
+    return {
+        "status": "Database Connected"
+    }
