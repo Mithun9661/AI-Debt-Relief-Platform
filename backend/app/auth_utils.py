@@ -1,6 +1,6 @@
 import os
 from datetime import datetime, timedelta
-import jwt
+from jose import jwtfrom jose import jwt
 from passlib.context import CryptContext
 
 SECRET_KEY = os.getenv("SECRET_KEY", "secret")
