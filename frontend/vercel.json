@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://ai-debt-relief-platform-1-flex.onrender.com/:path*"
+    }
+  ]
+}
