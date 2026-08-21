@@ -5,10 +5,14 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
+  const publicPaths = ["/register", "/login"];
+  const isPublicRequest = publicPaths.includes(config.url);
 
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  if (!isPublicRequest) {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
   }
 
   return config;
@@ -16,9 +20,6 @@ api.interceptors.request.use((config) => {
 
 export default api;
 export const getDashboardData = () => api.get("/dashboard_data");
-
 export const getFinancialHealth = () => api.get("/financial_health");
-
 export const getSettlementPrediction = () => api.get("/settlement_predictor");
-
 export const getAINegotiation = () => api.get("/ai_negotiation_strategy");
