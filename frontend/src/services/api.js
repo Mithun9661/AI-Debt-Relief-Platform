@@ -1,14 +1,18 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://ai-debt-relief-platform-1-flex.onrender.com",
+  baseURL: "/api",
 });
 
 API.interceptors.request.use((req) => {
-  const token = localStorage.getItem("token");
+  const publicPaths = ["/register", "/login"];
+  const isPublicRequest = publicPaths.includes(req.url);
 
-  if (token) {
-    req.headers.Authorization = `Bearer ${token}`;
+  if (!isPublicRequest) {
+    const token = localStorage.getItem("token");
+    if (token) {
+      req.headers.Authorization = `Bearer ${token}`;
+    }
   }
 
   return req;
