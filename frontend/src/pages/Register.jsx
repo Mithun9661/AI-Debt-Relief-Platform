@@ -1,68 +1,89 @@
 import API from "../api/api";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "../App.css";
 
 function Register() {
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        monthly_income: ""
-    });
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage("");
 
-        try {
-            const response = await API.post("/users/", formData);
-            alert("User Registered Successfully");
-            console.log(response.data);
-        } catch (error) {
-            console.log(error.response.data);
-            alert(JSON.stringify(error.response.data));
-        }
-    };
+    try {
+      const response = await API.post("/register", formData);
+      setMessage(response.data?.message || "Registration successful");
+      setTimeout(() => navigate("/"), 700);
+    } catch (error) {
+      setMessage(
+        error.response?.data?.detail ||
+        error.response?.data?.message ||
+        "Registration failed"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    return (
-        <div>
-            <h1>User Registration</h1>
+  return (
+    <div className="login-page">
+      <div className="right-panel" style={{ margin: "0 auto" }}>
+        <div className="login-card">
+          <h2>Create Account</h2>
+          <p>Register for FinRelief AI</p>
 
-            <form onSubmit={handleSubmit}>
-                <input
-                    placeholder="Name"
-                    onChange={(e) =>
-                        setFormData({
-                            ...formData,
-                            name: e.target.value
-                        })
-                    }
-                />
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              placeholder="Full Name"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              required
+            />
 
-                <input
-                    placeholder="Email"
-                    onChange={(e) =>
-                        setFormData({
-                            ...formData,
-                            email: e.target.value
-                        })
-                    }
-                />
+            <input
+              type="email"
+              placeholder="Email Address"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              required
+            />
 
-                <input
-                    placeholder="Monthly Income"
-                    type="number"
-                    onChange={(e) =>
-                        setFormData({
-                            ...formData,
-                            monthly_income: e.target.value
-                        })
-                    }
-                />
+            <input
+              type="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              required
+              minLength={6}
+            />
 
-                <button type="submit">
-                    Register
-                </button>
-            </form>
+            <button className="login-btn" type="submit" disabled={loading}>
+              {loading ? "Registering..." : "Register"}
+            </button>
+          </form>
+
+          {message && <p style={{ marginTop: "12px" }}>{message}</p>}
+
+          <button
+            type="button"
+            onClick={() => navigate("/")}
+            style={{ marginTop: "10px" }}
+          >
+            Back to Sign In
+          </button>
         </div>
-    );
+      </div>
+    </div>
+  );
 }
 
 export default Register;
