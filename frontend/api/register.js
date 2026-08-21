@@ -4,6 +4,12 @@ export default async function handler(req, res) {
   }
 
   try {
+    let data = req.body || {};
+
+    if (typeof data === "string") {
+      data = Object.fromEntries(new URLSearchParams(data));
+    }
+
     const response = await fetch(
       "https://ai-debt-relief-platform-1-flex.onrender.com/register_json",
       {
@@ -11,7 +17,7 @@ export default async function handler(req, res) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(req.body || {}),
+        body: JSON.stringify(data),
       }
     );
 
