@@ -124,30 +124,18 @@ def financial_health():
         ]
     }
 
-# -----------------------------
-# SETTLEMENT
-# -----------------------------
 @app.get("/settlement_predictor")
 def settlement():
     return {"message": "Settlement prediction"}
 
-# -----------------------------
-# NEGOTIATION
-# -----------------------------
 @app.get("/ai_negotiation_strategy")
 def negotiation():
     return {"message": "AI negotiation strategy"}
 
-# -----------------------------
-# HISTORY
-# -----------------------------
 @app.get("/ai_history")
 def history():
     return {"message": "History"}
 
-# -----------------------------
-# DB TEST
-# -----------------------------
 @app.get("/test_db")
 def test_db():
     return {"status": "Database Connected"}
