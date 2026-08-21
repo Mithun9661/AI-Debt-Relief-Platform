@@ -48,7 +48,7 @@ def health():
     return {"status": "ok"}
 
 # -----------------------------
-# REGISTER
+# REGISTER (FORM)
 # -----------------------------
 @app.post("/register")
 @app.post("/register/")
@@ -63,32 +63,39 @@ def register(
     name = name.strip()
 
     if not email or not password:
-        return {
-            "success": False,
-            "message": "Email and Password required"
-        }
+        return {"success": False, "message": "Email and Password required"}
 
     user = db.query(User).filter(User.email == email).first()
-
     if user:
-        return {
-            "success": False,
-            "message": "User already exists"
-        }
+        return {"success": False, "message": "User already exists"}
 
-    new_user = User(
-        email=email,
-        password=hash_password(password),
-        name=name
-    )
-
+    new_user = User(email=email, password=hash_password(password), name=name)
     db.add(new_user)
     db.commit()
 
-    return {
-        "success": True,
-        "message": "Registration Successful"
-    }
+    return {"success": True, "message": "Registration Successful"}
+
+# -----------------------------
+# REGISTER (JSON FOR VERCEL PROXY)
+# -----------------------------
+@app.post("/register_json")
+def register_json(data: dict, db: Session = Depends(get_db)):
+    email = str(data.get("email", "")).strip().lower()
+    password = str(data.get("password", "")).strip()
+    name = str(data.get("name", "")).strip()
+
+    if not email or not password:
+        return {"success": False, "message": "Email and Password required"}
+
+    user = db.query(User).filter(User.email == email).first()
+    if user:
+        return {"success": False, "message": "User already exists"}
+
+    new_user = User(email=email, password=hash_password(password), name=name)
+    db.add(new_user)
+    db.commit()
+
+    return {"success": True, "message": "Registration Successful"}
 
 # -----------------------------
 # DASHBOARD
