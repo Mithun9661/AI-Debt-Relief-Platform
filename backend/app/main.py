@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
@@ -46,7 +46,7 @@ def home():
 # REGISTER
 # -----------------------------
 @app.post("/register")
-def register(data: dict, db: Session = next(get_db())):
+def register(data: dict, db: Session = Depends(get_db)):
 
     email = data.get("email", "").strip().lower()
     password = data.get("password", "").strip()
