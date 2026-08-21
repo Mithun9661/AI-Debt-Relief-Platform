@@ -24,9 +24,10 @@ app.add_middleware(
         "https://ai-debt-relief-platform-mu.vercel.app",
         "https://ai-debt-relief-platform-git-main-mithun9661s-projects.vercel.app",
     ],
+    allow_origin_regex=r"https://.*\.vercel\.app$",
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"] ,
+    allow_headers=["*"] ,
 )
 
 # -----------------------------
