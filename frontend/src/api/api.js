@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://ai-debt-relief-platform-1-flex.onrender.com",
+  baseURL: "/api",
 });
 
 api.interceptors.request.use((config) => {
