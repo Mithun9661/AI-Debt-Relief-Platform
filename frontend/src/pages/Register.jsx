@@ -19,9 +19,17 @@ function Register() {
     setMessage("");
 
     try {
-      const response = await API.post("/register", formData);
+      const body = new URLSearchParams();
+      body.append("name", formData.name);
+      body.append("email", formData.email);
+      body.append("password", formData.password);
+
+      const response = await API.post("/register", body);
       setMessage(response.data?.message || "Registration successful");
-      setTimeout(() => navigate("/"), 700);
+
+      if (response.data?.success) {
+        setTimeout(() => navigate("/"), 700);
+      }
     } catch (error) {
       setMessage(
         error.response?.data?.detail ||
