@@ -34,13 +34,15 @@ app.include_router(auth_router)
 app.include_router(ai_router)
 
 # -----------------------------
-# HOME
+# HEALTH / HOME
 # -----------------------------
-@app.get("/")
+@app.get("/", tags=["Health"])
 def home():
-    return {
-        "message": "Welcome to FinRelief AI"
-    }
+    return {"message": "Welcome to FinRelief AI", "status": "ok"}
+
+@app.get("/health", tags=["Health"])
+def health():
+    return {"status": "ok"}
 
 # -----------------------------
 # REGISTER
