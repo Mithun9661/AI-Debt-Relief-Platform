@@ -22,6 +22,7 @@ app.add_middleware(
         "http://localhost:5174",
         "https://debt-relief-platform-xi.vercel.app",
         "https://ai-debt-relief-platform-mu.vercel.app",
+        "https://ai-debt-relief-platform-git-main-mithun9661s-projects.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
