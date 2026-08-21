@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Form
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
@@ -26,8 +26,8 @@ app.add_middleware(
     ],
     allow_origin_regex=r"https://.*\.vercel\.app$",
     allow_credentials=True,
-    allow_methods=["*"] ,
-    allow_headers=["*"] ,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # -----------------------------
@@ -51,11 +51,16 @@ def health():
 # REGISTER
 # -----------------------------
 @app.post("/register")
-def register(data: dict, db: Session = Depends(get_db)):
-
-    email = data.get("email", "").strip().lower()
-    password = data.get("password", "").strip()
-    name = data.get("name", "").strip()
+@app.post("/register/")
+def register(
+    name: str = Form(""),
+    email: str = Form(""),
+    password: str = Form(""),
+    db: Session = Depends(get_db),
+):
+    email = email.strip().lower()
+    password = password.strip()
+    name = name.strip()
 
     if not email or not password:
         return {
