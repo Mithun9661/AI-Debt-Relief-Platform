@@ -21,6 +21,7 @@ app.add_middleware(
         "http://localhost:5173",
         "http://localhost:5174",
         "https://debt-relief-platform-xi.vercel.app",
+        "https://ai-debt-relief-platform-mu.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -55,7 +56,6 @@ def register(data: dict, db: Session = Depends(get_db)):
     name = data.get("name", "").strip()
 
     if not email or not password:
-
         return {
             "success": False,
             "message": "Email and Password required"
@@ -64,7 +64,6 @@ def register(data: dict, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == email).first()
 
     if user:
-
         return {
             "success": False,
             "message": "User already exists"
@@ -89,7 +88,6 @@ def register(data: dict, db: Session = Depends(get_db)):
 # -----------------------------
 @app.get("/dashboard_data")
 def dashboard_data():
-
     return {
         "monthly_surplus": 25000,
         "total_outstanding": 350000,
@@ -102,7 +100,6 @@ def dashboard_data():
 # -----------------------------
 @app.get("/financial_health")
 def financial_health():
-
     return {
         "monthly_income": 50000,
         "monthly_expenses": 25000,
@@ -125,37 +122,25 @@ def financial_health():
 # -----------------------------
 @app.get("/settlement_predictor")
 def settlement():
-
-    return {
-        "message": "Settlement prediction"
-    }
+    return {"message": "Settlement prediction"}
 
 # -----------------------------
 # NEGOTIATION
 # -----------------------------
 @app.get("/ai_negotiation_strategy")
 def negotiation():
-
-    return {
-        "message": "AI negotiation strategy"
-    }
+    return {"message": "AI negotiation strategy"}
 
 # -----------------------------
 # HISTORY
 # -----------------------------
 @app.get("/ai_history")
 def history():
-
-    return {
-        "message": "History"
-    }
+    return {"message": "History"}
 
 # -----------------------------
 # DB TEST
 # -----------------------------
 @app.get("/test_db")
 def test_db():
-
-    return {
-        "status": "Database Connected"
-    }
+    return {"status": "Database Connected"}
