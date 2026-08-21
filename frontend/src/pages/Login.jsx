@@ -1,80 +1,56 @@
 import API from "../services/api";
-import { useEffect } from "react";
+import { useState } from "react";
 import "./../App.css";
-import {useState} from "react";
-import Dashboard from "./Dashboard"
 
 function Login() {
-  const [loggedIn, setLoggedIn]= useState(false);
-  if (loggedIn){
-    return <Dashboard />;
-  }
-  useEffect(() => {
-    API.get("/dashboard_data")
-      .then((res) => {
-        console.log("Backend Connected ✔");
-      })
-      .catch((err) => {
-        console.log("Backend Error ❌", err);
-      });
-}, []);
-    
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      alert("Please enter email and password");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const res = await API.post("/login", { email, password });
+      localStorage.setItem("token", res.data.access_token);
+      window.location.href = "/dashboard";
+    } catch (err) {
+      alert(err.response?.data?.detail || "Login failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="login-page">
       <div className="left-panel">
         <h1 className="logo">FinRelief AI</h1>
-
         <h2>Take Control of Your Financial Future</h2>
-
-        <p>
-          AI-powered debt management that helps you negotiate smarter,
-          settle faster, and live debt-free sooner.
-        </p>
-
+        <p>AI-powered debt management that helps you negotiate smarter, settle faster, and live debt-free sooner.</p>
         <div className="features">
-          <div className="feature-card">
-            <h3>40-75%</h3>
-            <p>Settlement Success</p>
-          </div>
-
-          <div className="feature-card">
-            <h3>AI</h3>
-            <p>Negotiation Engine</p>
-          </div>
-
-          <div className="feature-card">
-            <h3>Free</h3>
-            <p>Financial Analysis</p>
-          </div>
+          <div className="feature-card"><h3>40-75%</h3><p>Settlement Success</p></div>
+          <div className="feature-card"><h3>AI</h3><p>Negotiation Engine</p></div>
+          <div className="feature-card"><h3>Free</h3><p>Financial Analysis</p></div>
         </div>
       </div>
 
       <div className="right-panel">
         <div className="login-card">
-
           <h2>Welcome Back</h2>
-
           <p>Sign in to your dashboard</p>
-
           <div className="tabs">
-            <button className="active">Sign In</button>
-            <button>Register</button>
+            <button className="active" type="button">Sign In</button>
+            <button type="button" onClick={() => window.location.href = "/register"}>Register</button>
           </div>
-
-          <input
-            type="email"
-            placeholder="Email Address"
-          />
-
-          <input
-            type="password"
-            placeholder="Password"
-          />
-
-          <button className="login-btn"
-            onClick={()=> window.location.href = "/dashboard"}>
+          <input type="email" placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <button className="login-btn" type="button" onClick={handleLogin} disabled={loading}>
+            {loading ? "Signing in..." : "Sign In"}
           </button>
-
         </div>
       </div>
     </div>
