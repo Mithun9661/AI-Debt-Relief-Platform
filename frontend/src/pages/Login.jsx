@@ -3,6 +3,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./../App.css";
 
+const DEMO_EMAIL = "demo@finrelief.com";
+const DEMO_PASSWORD = "demo123";
+
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,10 +18,19 @@ function Login() {
       return;
     }
 
+    // Temporary demo access so the deployed app can be opened without registration.
+    if (email.trim().toLowerCase() === DEMO_EMAIL && password === DEMO_PASSWORD) {
+      localStorage.setItem("token", "demo-token");
+      localStorage.setItem("demo_user", "true");
+      navigate("/dashboard");
+      return;
+    }
+
     try {
       setLoading(true);
       const res = await API.post("/login", { email, password });
       localStorage.setItem("token", res.data.access_token);
+      localStorage.removeItem("demo_user");
       navigate("/dashboard");
     } catch (err) {
       alert(err.response?.data?.detail || "Login failed");
@@ -50,6 +62,9 @@ function Login() {
           <input type="email" placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} />
           <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
           <button className="login-btn" type="button" onClick={handleLogin} disabled={loading}>{loading ? "Signing in..." : "Sign In"}</button>
+          <p style={{ marginTop: "12px", fontSize: "13px" }}>
+            Demo access: {DEMO_EMAIL} / {DEMO_PASSWORD}
+          </p>
         </div>
       </div>
     </div>
