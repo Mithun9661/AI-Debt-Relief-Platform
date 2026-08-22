@@ -98,30 +98,15 @@ def register_json(data: dict, db: Session = Depends(get_db)):
 
 @app.get("/dashboard_data")
 def dashboard_data():
-    return {
-        "monthly_surplus": 25000,
-        "total_outstanding": 350000,
-        "emi_ratio": "35%",
-        "debt_stress": "Medium",
-    }
+    return {"monthly_surplus": 25000, "total_outstanding": 350000, "emi_ratio": "35%", "debt_stress": "Medium"}
 
 @app.get("/financial_health")
 def financial_health():
     return {
-        "monthly_income": 50000,
-        "monthly_expenses": 25000,
-        "monthly_surplus": 25000,
-        "lump_sum_available": 100000,
-        "emi_ratio": "35%",
-        "debt_ratio": "45%",
-        "stress_level": "Low",
-        "settlement_percentage": "60%",
-        "tips": [
-            "Reduce unnecessary expenses.",
-            "Pay high-interest loans first.",
-            "Track monthly spending.",
-            "Maintain emergency savings.",
-        ],
+        "monthly_income": 50000, "monthly_expenses": 25000, "monthly_surplus": 25000,
+        "lump_sum_available": 100000, "emi_ratio": "35%", "debt_ratio": "45%",
+        "stress_level": "Low", "settlement_percentage": "60%",
+        "tips": ["Reduce unnecessary expenses.", "Pay high-interest loans first.", "Track monthly spending.", "Maintain emergency savings."],
     }
 
 @app.get("/settlement_predictor")
