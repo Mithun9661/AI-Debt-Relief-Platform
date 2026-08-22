@@ -12,9 +12,6 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="FinRelief AI")
 
-# -----------------------------
-# CORS
-# -----------------------------
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -30,15 +27,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# -----------------------------
-# ROUTERS
-# -----------------------------
 app.include_router(auth_router)
 app.include_router(ai_router)
 
-# -----------------------------
-# HEALTH / HOME
-# -----------------------------
 @app.get("/", tags=["Health"])
 def home():
     return {"message": "Welcome to FinRelief AI", "status": "ok"}
@@ -47,9 +38,6 @@ def home():
 def health():
     return {"status": "ok"}
 
-# -----------------------------
-# REGISTER (FORM)
-# -----------------------------
 @app.post("/register")
 @app.post("/register/")
 def register(
@@ -69,15 +57,19 @@ def register(
     if user:
         return {"success": False, "message": "User already exists"}
 
-    new_user = User(email=email, password=hash_password(password), name=name)
-    db.add(new_user)
-    db.commit()
+    try:
+        new_user = User(
+            email=email,
+            password=hash_password(password),
+            name=name,
+        )
+        db.add(new_user)
+        db.commit()
+        return {"success": True, "message": "Registration Successful"}
+    except Exception as exc:
+        db.rollback()
+        return {"success": False, "message": f"Registration failed: {type(exc).__name__}"}
 
-    return {"success": True, "message": "Registration Successful"}
-
-# -----------------------------
-# REGISTER (JSON FOR VERCEL PROXY)
-# -----------------------------
 @app.post("/register_json")
 def register_json(data: dict, db: Session = Depends(get_db)):
     email = str(data.get("email", "")).strip().lower()
@@ -91,27 +83,28 @@ def register_json(data: dict, db: Session = Depends(get_db)):
     if user:
         return {"success": False, "message": "User already exists"}
 
-    new_user = User(email=email, password=hash_password(password), name=name)
-    db.add(new_user)
-    db.commit()
+    try:
+        new_user = User(
+            email=email,
+            password=hash_password(password),
+            name=name,
+        )
+        db.add(new_user)
+        db.commit()
+        return {"success": True, "message": "Registration Successful"}
+    except Exception as exc:
+        db.rollback()
+        return {"success": False, "message": f"Registration failed: {type(exc).__name__}"}
 
-    return {"success": True, "message": "Registration Successful"}
-
-# -----------------------------
-# DASHBOARD
-# -----------------------------
 @app.get("/dashboard_data")
 def dashboard_data():
     return {
         "monthly_surplus": 25000,
         "total_outstanding": 350000,
         "emi_ratio": "35%",
-        "debt_stress": "Medium"
+        "debt_stress": "Medium",
     }
 
-# -----------------------------
-# FINANCIAL HEALTH
-# -----------------------------
 @app.get("/financial_health")
 def financial_health():
     return {
@@ -127,8 +120,8 @@ def financial_health():
             "Reduce unnecessary expenses.",
             "Pay high-interest loans first.",
             "Track monthly spending.",
-            "Maintain emergency savings."
-        ]
+            "Maintain emergency savings.",
+        ],
     }
 
 @app.get("/settlement_predictor")
